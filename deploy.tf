@@ -50,7 +50,6 @@ Provider configuration:
 
 // Specify the provider and alternative access details below if needed
 provider "aws" {
-  shared_credentials_file = var.aws_cred_file
   profile                 = var.aws_profile
   region                  = var.aws_region
 }
@@ -59,7 +58,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 5.0"
     }
   }
 }

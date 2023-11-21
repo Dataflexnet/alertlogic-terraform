@@ -37,33 +37,35 @@ resource "aws_autoscaling_group" "ci_appliance_asg" {
     create_before_destroy = true
   }
 
-  tags = [
-    {
-      key                 = "Name"
-      value               = "AlertLogic Security Appliance"
-      propagate_at_launch = "true"
-    },
-    {
-      key                 = "AlertLogic-AccountID"
-      value               = var.account_id
-      propagate_at_launch = "true"
-    },
-    {
-      key                 = "AlertLogic-EnvironmentID"
-      value               = var.deployment_id
-      propagate_at_launch = "true"
-    },
-    {
-      key                 = "AlertLogic"
-      value               = "Security"
-      propagate_at_launch = "true"
-    },
-    {
-      key                 = "Alertlogic CI Scan Appliance Manual Mode Template Version"
-      value               = var.internal
-      propagate_at_launch = "true"
-    }
-  ]
+  tag {
+    key                 = "Name"
+    value               = "AlertLogic Security Appliance"
+    propagate_at_launch = "true"
+  }
+
+  tag {
+    key                 = "AlertLogic-AccountID"
+    value               = var.account_id
+    propagate_at_launch = "true"
+  }
+
+  tag {
+    key                 = "AlertLogic-EnvironmentID"
+    value               = var.deployment_id
+    propagate_at_launch = "true"
+  }
+
+  tag {
+    key                 = "AlertLogic"
+    value               = "Security"
+    propagate_at_launch = "true"
+  }
+  
+  tag {
+    key                 = "Alertlogic CI Scan Appliance Manual Mode Template Version"
+    value               = var.internal
+    propagate_at_launch = "true"
+  }
 }
 
 // create security group to allow security appliance traffic to flow outbound to any destination IP on specific ports. In general, it will have no rules, which basically allows all traffic outbound but is resitricted to specific ports required for communication
