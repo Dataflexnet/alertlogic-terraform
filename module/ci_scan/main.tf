@@ -60,7 +60,7 @@ resource "aws_autoscaling_group" "ci_appliance_asg" {
     value               = "Security"
     propagate_at_launch = "true"
   }
-  
+
   tag {
     key                 = "Alertlogic CI Scan Appliance Manual Mode Template Version"
     value               = var.internal
@@ -122,5 +122,6 @@ resource "aws_security_group" "ci_appliance_sg" {
     "AlertLogic-EnvironmentID"                                  = var.deployment_id
     "AlertLogic"                                                = "Security"
     "Alertlogic CI Scan Appliance Manual Mode Template Version" = var.internal
+    "Purpose"                                                   = "al-scan"
   }
 }

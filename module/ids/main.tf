@@ -173,5 +173,6 @@ resource "aws_security_group" "ids_appliance_sg" {
     "AlertLogic-EnvironmentID"                    = var.deployment_id
     "AlertLogic"                                  = "Security"
     "Alertlogic IDS Manual Mode Template Version" = var.internal
+    "Purpose"                                     = "al-ids"
   }
 }
