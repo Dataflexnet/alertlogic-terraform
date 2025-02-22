@@ -2,10 +2,28 @@
 data "aws_region" "current" {
 }
 
+data "http" "image_data" {
+  url = "https://s3.amazonaws.com/cd.prod.manual-mode.repository/images/latest/scan_images.json"
+
+  request_headers = {
+    Accept = "application/json"
+  }
+}
+
+locals {
+  aws_region = data.aws_region.current.name
+
+  alert_logic_data    = jsondecode(data.http.image_data.response_body)
+  alert_logic_regions = local.alert_logic_data["RegionSettings"]
+  alert_logic_region  = lookup(local.alert_logic_regions, local.aws_region, "Region not found")
+
+  image_id = local.alert_logic_region.ImageId
+}
+
 // create launch configuration for the security appliances to be created
 resource "aws_launch_configuration" "ci_appliance_lc" {
   name_prefix                 = "AlertLogic Security Launch Configuration ${var.account_id}/${var.deployment_id}/${var.vpc_id}_"
-  image_id                    = var.aws_amis[data.aws_region.current.name]
+  image_id                    = local.image_id
   security_groups             = [aws_security_group.ci_appliance_sg.id]
   instance_type               = var.ci_instance_type
   associate_public_ip_address = var.ci_subnet_type == "Public" ? true : false
