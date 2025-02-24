@@ -20,13 +20,14 @@ locals {
   image_id = local.alert_logic_region.ImageId
 }
 
-// create launch configuration for the security appliances to be created
-resource "aws_launch_configuration" "ci_appliance_lc" {
-  name_prefix                 = "AlertLogic Security Launch Configuration ${var.account_id}/${var.deployment_id}/${var.vpc_id}_"
-  image_id                    = local.image_id
-  security_groups             = [aws_security_group.ci_appliance_sg.id]
-  instance_type               = var.ci_instance_type
-  associate_public_ip_address = var.ci_subnet_type == "Public" ? true : false
+// create launch template for the security appliances to be created
+resource "aws_launch_template" "ci_appliance_lt" {
+  name_prefix   = "AlertLogic Security Launch Template ${var.account_id}/${var.deployment_id}/${var.vpc_id}_"
+  image_id      = local.image_id
+  instance_type = var.ci_instance_type
+
+  vpc_security_group_ids = [aws_security_group.ci_appliance_sg.id]
+
   user_data = templatefile("${path.module}/userdata.tpl",
     {
       stack_host    = var.stack_vaporator["${var.stack}.host"]
@@ -43,13 +44,17 @@ resource "aws_launch_configuration" "ci_appliance_lc" {
 
 // create ASG to have the specified amount of security appliances up and running using the created launch configuration
 resource "aws_autoscaling_group" "ci_appliance_asg" {
-  name                 = "AlertLogic Security Autoscaling Group ${var.account_id}/${var.deployment_id}/${var.vpc_id}"
-  max_size             = var.ci_appliance_number
-  min_size             = var.ci_appliance_number
-  desired_capacity     = var.ci_appliance_number
-  force_delete         = true
-  launch_configuration = aws_launch_configuration.ci_appliance_lc.name
-  vpc_zone_identifier  = [var.ci_subnet_id]
+  name                = "AlertLogic Security Autoscaling Group ${var.account_id}/${var.deployment_id}/${var.vpc_id}"
+  max_size            = var.ci_appliance_number
+  min_size            = var.ci_appliance_number
+  desired_capacity    = var.ci_appliance_number
+  force_delete        = true
+  vpc_zone_identifier = [var.ci_subnet_id]
+
+  launch_template {
+    id      = aws_launch_template.ci_appliance_lt.id
+    version = "$Default"
+  }
 
   lifecycle {
     create_before_destroy = true
