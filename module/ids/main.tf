@@ -24,7 +24,7 @@ locals {
 resource "aws_launch_template" "ids_appliance_lt" {
   count = var.create_ids
 
-  name_prefix   = "AlertLogic IDS Security Launch Template ${var.account_id}/${var.deployment_id}/${var.vpc_id}_"
+  name_prefix   = "al-ids-lt"
   image_id      = local.image_id
   instance_type = var.ids_instance_type
 
@@ -39,7 +39,7 @@ resource "aws_launch_template" "ids_appliance_lt" {
 resource "aws_autoscaling_group" "ids_appliance_asg" {
   count = var.create_ids
 
-  name                = "AlertLogic IDS Security Autoscaling Group ${var.account_id}/${var.deployment_id}/${var.vpc_id}"
+  name                = "al-ids-asg"
   max_size            = var.ids_appliance_number
   min_size            = var.ids_appliance_number
   desired_capacity    = var.ids_appliance_number
@@ -88,7 +88,7 @@ resource "aws_autoscaling_group" "ids_appliance_asg" {
 
 // create security group to allow IDS security appliance traffic to flow outbound to Alert Logic DataCenter (resitricted and required outbound rules will be applied)
 resource "aws_security_group" "ids_appliance_sg" {
-  name        = "AlertLogic IDS Security Group ${var.account_id}/${var.deployment_id}/${var.vpc_id}"
+  name        = "al-ids-sg"
   count       = var.create_ids
   description = "AlertLogic IDS Security Group"
   vpc_id      = var.vpc_id

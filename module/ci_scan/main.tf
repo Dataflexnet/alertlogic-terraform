@@ -22,7 +22,7 @@ locals {
 
 // create launch template for the security appliances to be created
 resource "aws_launch_template" "ci_appliance_lt" {
-  name_prefix   = "AlertLogic Security Launch Template ${var.account_id}/${var.deployment_id}/${var.vpc_id}_"
+  name_prefix   = "al-scan-lt"
   image_id      = local.image_id
   instance_type = var.ci_instance_type
 
@@ -44,7 +44,7 @@ resource "aws_launch_template" "ci_appliance_lt" {
 
 // create ASG to have the specified amount of security appliances up and running using the created launch configuration
 resource "aws_autoscaling_group" "ci_appliance_asg" {
-  name                = "AlertLogic Security Autoscaling Group ${var.account_id}/${var.deployment_id}/${var.vpc_id}"
+  name                = "al-scan-asg"
   max_size            = var.ci_appliance_number
   min_size            = var.ci_appliance_number
   desired_capacity    = var.ci_appliance_number
@@ -94,7 +94,7 @@ resource "aws_autoscaling_group" "ci_appliance_asg" {
 
 // create security group to allow security appliance traffic to flow outbound to any destination IP on specific ports. In general, it will have no rules, which basically allows all traffic outbound but is resitricted to specific ports required for communication
 resource "aws_security_group" "ci_appliance_sg" {
-  name        = "AlertLogic Security Group ${var.account_id}/${var.deployment_id}/${var.vpc_id}"
+  name        = "al-scan-sg"
   description = "AlertLogic Security Group"
   vpc_id      = var.vpc_id
 
