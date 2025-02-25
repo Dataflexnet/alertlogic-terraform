@@ -28,14 +28,14 @@ resource "aws_launch_template" "ci_appliance_lt" {
 
   vpc_security_group_ids = [aws_security_group.ci_appliance_sg.id]
 
-  user_data = templatefile("${path.module}/userdata.tpl",
+  user_data = base64encode(templatefile("${path.module}/userdata.tpl",
     {
       stack_host    = var.stack_vaporator["${var.stack}.host"]
       stack_port    = var.stack_vaporator["${var.stack}.port"]
       account_id    = var.account_id
       deployment_id = var.deployment_id
     }
-  )
+  ))
 
   lifecycle {
     create_before_destroy = true
