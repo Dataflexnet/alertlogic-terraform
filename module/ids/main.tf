@@ -11,7 +11,7 @@ data "http" "image_data" {
 }
 
 locals {
-  aws_region = data.aws_region.current.name
+  aws_region = data.aws_region.current.region
 
   alert_logic_data    = jsondecode(data.http.image_data.response_body)
   alert_logic_regions = local.alert_logic_data["RegionSettings"]
